@@ -1,0 +1,21 @@
+function setup() {
+  createCanvas(400, 400);
+}
+
+function draw() {
+ 
+  background(140, 14, 16);
+  
+ 
+  strokeWeight(33); 
+  textSize(65);
+  fill(0);
+  text("GAME OVER", 5,200);
+  fill(255); 
+  text("GAME OVER", 2,200);
+  
+  fill(255);
+  textSize(13);
+  text("Awww...", 30, 100); 
+  text ("try again!", 300, 300);
+}
