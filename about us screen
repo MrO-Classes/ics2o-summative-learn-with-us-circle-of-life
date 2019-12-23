@@ -22,8 +22,8 @@ function draw() {
   
   // 2nd paragraph 
   text ("We've created this video game by using", 10, 210);
-  text ("javascript, HTML, CSS; that we've learned", 10, 230);
-  text ("throught out the course.", 10, 250); 
+  text ("Javascript, HTML and CSS that we've learned", 10, 230);
+  text ("throughtout the course.", 10, 250); 
 
   
   text ("We hope you enjoy it!", 10, 300); 
