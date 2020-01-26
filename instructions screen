@@ -4,7 +4,7 @@ function setup() {
 }
 
 function draw() {
-  background(222, 87, 215);
+  background(225, 87, 215);
   fill(0,0,0);
   strokeWeight(90);
   textSize(40);
