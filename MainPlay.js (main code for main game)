@@ -31,21 +31,26 @@ var currentQuestion=0;
 var timeForMiniGame = false;
 
 function gameSetup() {
+  //function setup for the game
   for(var posCount =0; posCount<startPositionCount; posCount++) {
+    //putting random values into each array
     xPositions.push(random(0,canvasSize));
     yPositions.push(random(0,maxStartHeight));
     fallSpeed.push(random(1,maxSpeed));
     
+    //putting random colours into those arrays
     colorsR.push(random(0,255));                
     colorsG.push(random(0,255));
     colorsB.push(random(0,255));
     
+    //putting random shapes from the shapes array into the shape select array
     shapeSelect.push(random(shapes));
   }
   for (var turn=0; turn<maxLookForTurns; turn++) {
     lookFor.push(random(shapes));
    
   }
+  //place to type answer to questions created then hidden
   fillUpPatterns();
     inp=createInput('');
   inp.style.position='absolute';
@@ -54,7 +59,8 @@ function gameSetup() {
   inp.input(processAnswer);
   inp.hide();
   
-  
+  //all other buttons created and hidden 
+  //mousePressed and then function that says when to show button
   submitButton = createButton('Submit');
   submitButton.mousePressed(answerSubmit);
   submitButton.hide();
@@ -68,6 +74,7 @@ function gameSetup() {
   restartButton.hide();
 }
 
+//all questions and answers asigned a number in the pattern choices array
 function fillUpPatterns() {
   mathPatternQuestions[0]='2, 4, 6, 8, ';
   mathPatternAnswers[0]='10';
@@ -79,14 +86,29 @@ function fillUpPatterns() {
   mathPatternAnswers[3]='40';
   mathPatternQuestions[4]='300, 275, 250, 225, ';
   mathPatternAnswers[4]='200';
+  mathPatternQuestions[5]='0, 20, 40, 60, ';
+  mathPatternAnswers[5]='80';
+  mathPatternQuestions[6]='7, 14, 21, 28, ';
+  mathPatternAnswers[6]='35';
+  mathPatternQuestions[7]='9, 18, 27, 36, ';
+  mathPatternAnswers[7]='45';
+  mathPatternQuestions[8]='120, 121, 122, 123, ';
+  mathPatternAnswers[8]='124';
+  mathPatternQuestions[9]='36, 35, 34, 33, ';
+  mathPatternAnswers[9]='32';
+  mathPatternQuestions[10]='20, 18, 16, 14, ';
+  mathPatternAnswers[10]='12';
   
-  patternChoices=[0,1,2,3,4];
+  patternChoices=[0,1,2,3,4,5,6,7,8,9,10];
 }
-
+  
+ 
 function gameDraw() {
+  //draw function for the game (had to change draw and setup for each since there can only be one)
   
   
   if (victoryEnd) {
+    //if currentTurn=10 you win the whole game
     noLoop();
      background(88, 181, 67);
   
@@ -104,7 +126,7 @@ function gameDraw() {
   text("Congrats!!", 50, 50);
   text("Play again!", 240, 345);
   
-    //play again RIYA
+  //all other possibilities
   } else if (timeForMiniGame) {
     doMiniGame();
   } else if (!madeAMistake) {
@@ -117,43 +139,50 @@ function gameDraw() {
 
 
 
-
-
 function drawFallingShapes() {
+  //for exactly what it sounds like
     frameRate(15);
+  //it was going wayyyy too fast before that
     background(1, 18, 18);
 
     for (var i = 0; i < startPositionCount; i++) {
       noStroke();
+      //random colour for each shape
       fill(colorsR[i], colorsG[i], colorsB[i]);
+      //if shapeSelect picks a circle from the shapes array draw a circle with these parameters
       if (shapeSelect[i] == 'circle') {
         ellipse(xPositions[i], yPositions[i], 60, 60);
+        //if shapeSelect picks an oval from the shapes array draw a oval with these parameters
       } else if (shapeSelect[i] == 'oval') {
         ellipse(xPositions[i], yPositions[i], 30, 50);
+        //if shapeSelect picks a square from the shapes array draw a square with these parameters
       } else if (shapeSelect[i] == 'square') {
-        rectMode(CENTER);
+        rectMode(CENTER);//otherwise the x and y positions were for the corner of the rectangle unlike the ellipses which are already center orieneted so it looked weird
         rect(xPositions[i], yPositions[i], 45, 45);
       } else if (shapeSelect[i] == 'rectangle') {
         rectMode(CENTER);
         rect(xPositions[i], yPositions[i], 30, 50);
       } else {
-        // triangle
+        // triangles
         triangle(xPositions[i], yPositions[i]-30, xPositions[i]-30, yPositions[i]+30, xPositions[i]+30, yPositions[i]+30);
       }
       yPositions[i] += fallSpeed[i];
         
+      //shapes go back up to the top when they hit the bottom so it's continuous
       if(yPositions[i] > 400) {
         yPositions[i]=0;
       }
     }
+  //white rectangle showing you your score and the shape you need to click
     fill(255, 255, 255);
-    rectMode(CORNER);
+    rectMode(CORNER);//set it back to the corner
     rect(120,15, 150, 50);
     fill(0,0,0);
     text(currentTurn+1+": "+lookFor[currentTurn]+' ('+(maxToFind-foundCorrects)+' to go)',145, 45);
   
+  //recatangle for button back to main menu
   fill(255, 255, 255);
-  rect(340, 370, 40, 60);
+  rect(340, 350, 80, 40);
   fill(0,0,0);
   text("BACK", 345, 375);
   
@@ -161,27 +190,32 @@ function drawFallingShapes() {
 }
 
 function gameMouseClicked() {
-  console.log(mouseX + ", " + mouseY)
+  //again could only have one mouseClicked so had to change names
+  
+  //actually making that back button do something
   if (mouseX >= 340 && mouseX <= 380 &&
       mouseY >= 370 && mouseY <= 430) {
     // go to main menu
     currentScene = 1;
+    //stop running the rest of this
     return;
   }
   
   var iGotIt=false;
-  // Look for object on x position at mouseX +/- 25
+  // Look for object on x position at mouseX +/- 27
   for(i=0; i<startPositionCount; i++) {
     if (mouseX-27 <= xPositions[i] && xPositions[i] <= mouseX+27) {
-      if (mouseY-27 <= yPositions[i] && yPositions[i] <= mouseY+25) {
+      if (mouseY-27 <= yPositions[i] && yPositions[i] <= mouseY+27) {
         if (shapeSelect[i] == lookFor[currentTurn]) {
+          //change the score
           foundCorrects++;
           iGotIt=true;
           if (foundCorrects == maxToFind) {
             currentTurn++;
             if (currentTurn == maxLookForTurns) {
-              // successful end of whole game
+              // successful end of whole game woohoo
               setupVictoryEnd();
+              //multiples of 3 take you to mini game
             } else if(currentTurn == 3 || currentTurn == 6 || currentTurn == 9) {
               timeForMiniGame=true;
               miniGameSetup();
@@ -192,7 +226,7 @@ function gameMouseClicked() {
         }
       }
     }
-  }
+  } //if you don't click the right shape
   if (!iGotIt) {
     madeAMistake=true;
   }
@@ -208,8 +242,11 @@ var goBackButton;
 var restartButton;
 
 function askAQuestion() {
+  //again does exactly what it sounds like
   
+  //picks from the patternchoices array from way up there^ if you remember
   currentQuestion=random(patternChoices);
+  
   background(239, 245, 59);
   
   fill(240, 150, 48);
@@ -227,25 +264,30 @@ function askAQuestion() {
   var pad=rect(25,120,350,250);
   fill(0,0,0);
   text('Complete the sequence:', 40, 150);
+  //different question each time
   text(mathPatternQuestions[currentQuestion], 40, 200);
  
+  //show the input bar and the submit button
   inp.value('');
   inp.show();
   submitButton.show();
   
 }
-
+//after they hit submit
 function answerSubmit() {
   inp.hide();
   submitButton.hide();
   if(userAnswer == mathPatternAnswers[currentQuestion]) {
     handleSuccess();
+    //show correct screen
   } else {
     showFailure();
+    //show oops screen
   }
 }
 
 function goBack(){
+  //you clicked the button but don't let mouseClicked think your doing something funny
   madeAMistake=false;
   foundCorrects=0;
   timeForMiniGame = false;
@@ -253,7 +295,7 @@ function goBack(){
    
 }
 
-
+//get a questions wrong>hit restart>go back to main menu
 function restartGame() {
   madeAMistake=false;
   foundCorrects=0;
@@ -263,6 +305,7 @@ function restartGame() {
   loop();
 }
 
+//you got the question right
 function handleSuccess() {
  background(71, 195, 54);
 
@@ -303,6 +346,7 @@ function handleSuccess() {
   textSize(20);
   text ('You got the answer right!',100,350);
   
+  //delay before it goes back to falling shapes
   setTimeout(function() {
     // reset the game
     madeAMistake=false;
@@ -311,6 +355,7 @@ function handleSuccess() {
   }, 2000);
 }
 
+//you got the question wrong
 function showFailure() {
   background(207, 45, 45);
 
